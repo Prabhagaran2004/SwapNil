@@ -348,40 +348,7 @@ export default function IntentPage() {
                   </div>
 
                   <div className="p-8">
-                    {/* Quick Actions */}
-                    <div className="mb-6">
-                      <label className="block text-white/80 text-sm font-medium mb-3">
-                        Quick Actions
-                      </label>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        {quickActions.map((action, idx) => {
-                          const IconComponent = action.icon;
-                          return (
-                            <button
-                              key={idx}
-                              onClick={() => handleQuickAction(action.text)}
-                              className="group bg-white/5 backdrop-blur-xl border border-white/20 hover:border-teal-400/40 rounded-2xl p-4 text-left transition-all hover:scale-[1.02]"
-                            >
-                              <div className="flex items-center gap-3">
-                                <div
-                                  className={`w-10 h-10 bg-gradient-to-r ${action.color} rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform`}
-                                >
-                                  <IconComponent className="w-5 h-5 text-white" />
-                                </div>
-                                <div>
-                                  <p className="text-white font-medium text-sm">
-                                    {action.text}
-                                  </p>
-                                  <p className="text-gray-400 text-xs">
-                                    {action.desc}
-                                  </p>
-                                </div>
-                              </div>
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
+                    
 
                     {/* Chat Messages */}
                     <div className="mb-6">
