@@ -169,9 +169,12 @@ export default function SwapPage() {
                           <p className="text-teal-200 text-sm">Secure smart-order routing</p>
                         </div>
                       </div>
+                      <div suppressHydrationWarning>
                       <button className="p-2 hover:bg-white/10 rounded-xl transition-colors">
                         <Settings className="w-5 h-5 text-gray-400" />
                       </button>
+                    </div>
+
                     </div>
                   </div>
 

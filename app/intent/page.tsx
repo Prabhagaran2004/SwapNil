@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Send, Zap, TrendingUp, Shield, Coins, ArrowUpRight,
@@ -31,11 +31,16 @@ export default function IntentPage() {
       sender: "ai", 
       text: "Welcome to SwapAI! I'm your intelligent DeFi assistant. I can help you with token swaps, liquidity analysis, yield farming opportunities, and market insights. What would you like to explore today?",
       timestamp: new Date().toLocaleTimeString(),
-      suggestions: ["Find best AVAX to USDC route", "Analyze yield opportunities", "Check gas optimization"]
+      suggestions: ["Find best STX to USDC route", "Analyze yield opportunities", "Check gas optimization"]
     }
   ]);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
+  const [time, setTime] = useState<string | null>(null);
+
+  useEffect(() => {
+    setTime(new Date().toLocaleTimeString());
+  }, []);
 
   const quickActions = [
     { icon: Coins, text: "Best Swap Routes", color: "from-cyan-500 to-blue-600", desc: "Find optimal trading paths" },
@@ -305,7 +310,9 @@ export default function IntentPage() {
                                       ))}
                                     </div>
                                   )}
-                                  <p className="text-xs opacity-60 mt-2">{msg.timestamp}</p>
+                                <p className="text-xs opacity-60 mt-2">
+                                {time}
+                                </p>
                                 </div>
                               </motion.div>
                             ))}
