@@ -17,7 +17,7 @@ export default function Navbar() {
           </Link>
           <Link href="/intent" className="text-lg text-white/80 hover:text-white px-4 py-2 rounded transition">
             Intent
-          </Link>
+          </Link>
           <button className="bg-gradient-to-r from-cyan-500 to-blue-600 text-white px-6 py-2 rounded-xl font-semibold hover:shadow-lg hover:shadow-cyan-500/25 transition-all">
             Connect Wallet
           </button>

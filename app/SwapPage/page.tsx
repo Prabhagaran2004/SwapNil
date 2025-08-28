@@ -1,13 +1,17 @@
 'use client';
 import { useState, useEffect } from "react";
-import { ArrowUpDown, Zap, TrendingUp, Shield, Clock, Wallet, ArrowRight, RefreshCw, Settings, Info, CheckCircle2, AlertTriangle, Sparkles, Globe, Lock, BarChart3 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  ArrowUpDown, Zap, TrendingUp, Shield, Clock, Settings, Info,
+  CheckCircle2, Sparkles, Globe, Lock, BarChart3, Activity, Cpu, Server
+} from "lucide-react";
 import Navbar from "../components/Navbar";
 
 const tokens = [
   { symbol: "AVAX", name: "Avalanche", price: 42.15, change: 5.2, logo: "🔺" },
-  { symbol: "USDC", name: "USD Coin", price: 1.00, change: 0.1, logo: "💵" },
+  { symbol: "USDC", name: "USD Coin", price: 1.0, change: 0.1, logo: "💵" },
   { symbol: "ETH", name: "Ethereum", price: 3245.78, change: -2.1, logo: "⟐" },
-  { symbol: "BTC", name: "Bitcoin", price: 68420.50, change: 3.8, logo: "₿" },
+  { symbol: "BTC", name: "Bitcoin", price: 68420.5, change: 3.8, logo: "₿" },
   { symbol: "LINK", name: "Chainlink", price: 18.65, change: 7.3, logo: "🔗" },
   { symbol: "UNI", name: "Uniswap", price: 12.34, change: -1.5, logo: "🦄" }
 ];
@@ -19,14 +23,16 @@ export default function SwapPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [showQuote, setShowQuote] = useState(false);
   const [slippage, setSlippage] = useState("0.5");
-  const [estimatedGas, setEstimatedGas] = useState(null);
+  const [estimatedGas, setEstimatedGas] = useState<number | null>(null);
+  const [flip, setFlip] = useState(false); // visual flip animation trigger
+
 
   // Mock quote calculation
   useEffect(() => {
     if (amount && parseFloat(amount) > 0) {
       setShowQuote(true);
       const estimated = (parseFloat(amount) * fromToken.price) / toToken.price;
-      setEstimatedGas(Math.random() * 50 + 10); // Mock gas estimation
+      setEstimatedGas(Math.random() * 50 + 10);
     } else {
       setShowQuote(false);
     }
@@ -41,46 +47,60 @@ export default function SwapPage() {
   };
 
   const swapTokens = () => {
+    // visual flip
+    setFlip(!flip);
+    setTimeout(() => setFlip(false), 450);
+
     const temp = fromToken;
     setFromToken(toToken);
     setToToken(temp);
   };
 
-  const estimatedOutput = amount ? ((parseFloat(amount) * fromToken.price) / toToken.price).toFixed(6) : "0";
+  const estimatedOutput =
+    amount ? ((parseFloat(amount) * fromToken.price) / toToken.price).toFixed(6) : "0";
+
+  // ---- extra derived insights (pure UI) ----
+  const priceRatio = (fromToken.price / toToken.price) || 0;
+  const tradeSizeUsd = (parseFloat(amount || "0") * fromToken.price) || 0;
+  const priceImpact = tradeSizeUsd <= 0 ? 0 : Math.min(2.5, Math.sqrt(tradeSizeUsd) / 200); // mock %
+  const liquidityTier = tradeSizeUsd < 1_000 ? "Retail" : tradeSizeUsd < 25_000 ? "Pro" : "Whale";
+  const volatility = Math.abs(fromToken.change) + Math.abs(toToken.change); // mock composite
 
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 relative overflow-hidden pt-20">
-        {/* Animated Background */}
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -top-40 -right-40 w-80 h-80 bg-cyan-500/8 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-emerald-500/8 rounded-full blur-3xl animate-pulse delay-1000"></div>
-          <div className="absolute top-1/3 left-1/4 w-60 h-60 bg-blue-500/5 rounded-full blur-3xl animate-spin" style={{animationDuration: '25s'}}></div>
-        </div>
+      <div className="min-h-screen relative overflow-hidden pt-20"
+           style={{ background: "radial-gradient(1200px 800px at 10% -10%, #0EA5E922, transparent), radial-gradient(900px 700px at 90% 110%, #22C55E22, transparent), linear-gradient(180deg,#0B0F19 0%, #0A0E17 100%)" }}>
+
+        {/* Neon Orbs / Glass Glow */}
+        {/* <div className="pointer-events-none absolute inset-0">
+          <div className="absolute -top-40 -right-40 w-[28rem] h-[28rem] rounded-full blur-3xl bg-cyan-500/20 animate-pulse" />
+          <div className="absolute -bottom-40 -left-40 w-[28rem] h-[28rem] rounded-full blur-3xl bg-fuchsia-500/10 animate-pulse [animation-delay:1s]" />
+        </div> */}
 
         <div className="relative z-10 px-4 py-12">
           <div className="max-w-7xl mx-auto">
-            {/* Header Section */}
+            {/* Header */}
             <div className="text-center mb-12">
-              <div className="inline-flex items-center gap-2 bg-gradient-to-r from-cyan-500/20 to-emerald-500/20 backdrop-blur-xl border border-cyan-500/30 rounded-full px-6 py-2 mb-6">
-                <Sparkles className="w-4 h-4 text-cyan-400" />
-                <span className="text-cyan-300 text-sm font-medium">AI-Optimized Trading</span>
+              <div className="inline-flex items-center gap-2 bg-white/5 backdrop-blur-xl border border-white/10 rounded-full px-6 py-2 mb-6 shadow-[0_0_40px_rgba(0,255,209,0.15)]">
+                <Sparkles className="w-4 h-4 text-teal-300" />
+                <span className="text-teal-200 text-sm font-medium">AI-Optimized Cross-DEX Routing</span>
               </div>
-              <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-white via-cyan-100 to-emerald-200 bg-clip-text text-transparent mb-4">
-                Intelligent Token Swaps
+              <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-white via-teal-100 to-fuchsia-200 bg-clip-text text-transparent mb-3">
+                Token Swap
               </h1>
-              <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-                Experience lightning-fast swaps with AI-powered routing and institutional-grade security
+              <p className="text-lg text-white/70 max-w-3xl mx-auto">
+                Premium, lightning-fast swaps with smart routing, MEV-aware protection, and concierge-grade UX.
               </p>
             </div>
 
             <div className="grid lg:grid-cols-3 gap-8">
-              {/* Market Stats */}
+              {/* Left rail: Market + Stack */}
               <div className="lg:col-span-1 space-y-6">
-                <div className="bg-white/5 backdrop-blur-2xl rounded-3xl p-6 border border-white/10">
+                {/* Market Overview */}
+                <div className="bg-white/5 backdrop-blur-2xl rounded-3xl p-6 border border-white/10 shadow-2xl">
                   <h3 className="text-white font-semibold mb-4 flex items-center gap-2">
-                    <BarChart3 className="w-5 h-5 text-cyan-400" />
+                    <BarChart3 className="w-5 h-5 text-teal-300" />
                     Market Overview
                   </h3>
                   <div className="space-y-4">
@@ -95,7 +115,7 @@ export default function SwapPage() {
                         </div>
                         <div className="text-right">
                           <p className="text-white font-semibold">${token.price.toLocaleString()}</p>
-                          <p className={`text-xs ${token.change >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                          <p className={`text-xs ${token.change >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
                             {token.change >= 0 ? '+' : ''}{token.change}%
                           </p>
                         </div>
@@ -104,45 +124,49 @@ export default function SwapPage() {
                   </div>
                 </div>
 
-                <div className="bg-white/5 backdrop-blur-2xl rounded-3xl p-6 border border-white/10">
+                {/* Blockchain Stack (generic, not Avalanche-specific) */}
+                <div className="bg-white/5 backdrop-blur-2xl rounded-3xl p-6 border border-white/10 shadow-2xl">
                   <h3 className="text-white font-semibold mb-4 flex items-center gap-2">
-                    <Shield className="w-5 h-5 text-emerald-400" />
-                    Security Features
+                    <Shield className="w-5 h-5 text-emerald-300" />
+                    Blockchain Stack
                   </h3>
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-3">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                      <span className="text-gray-300 text-sm">Multi-sig Protection</span>
+                  <div className="grid grid-cols-2 gap-3 text-sm">
+                    <div className="flex items-center gap-2 text-white/80">
+                      <Cpu className="w-4 h-4 text-teal-300" /> EVM Compatible
                     </div>
-                    <div className="flex items-center gap-3">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                      <span className="text-gray-300 text-sm">Real-time Monitoring</span>
+                    <div className="flex items-center gap-2 text-white/80">
+                      <Activity className="w-4 h-4 text-fuchsia-300" /> ~1–2s Block Time
                     </div>
-                    <div className="flex items-center gap-3">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                      <span className="text-gray-300 text-sm">MEV Protection</span>
+                    <div className="flex items-center gap-2 text-white/80">
+                      <Server className="w-4 h-4 text-cyan-300" /> PoS / Rollup
                     </div>
-                    <div className="flex items-center gap-3">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                      <span className="text-gray-300 text-sm">Slippage Guard</span>
+                    <div className="flex items-center gap-2 text-white/80">
+                      <Globe className="w-4 h-4 text-amber-300" /> Cross-DEX Routing
                     </div>
+                  </div>
+                  <div className="mt-4 flex items-center gap-2">
+                    <span className="relative flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-300"></span>
+                    </span>
+                    <span className="text-emerald-300 text-xs">Network healthy • Low fees</span>
                   </div>
                 </div>
               </div>
 
-              {/* Main Swap Interface */}
+              {/* Main Swap */}
               <div className="lg:col-span-2">
-                <div className="bg-white/5 backdrop-blur-2xl rounded-3xl border border-white/10 shadow-2xl overflow-hidden">
-                  {/* Header */}
-                  <div className="bg-gradient-to-r from-cyan-500/10 to-emerald-500/10 p-6 border-b border-white/10">
+                <div className="rounded-3xl border border-white/10 bg-white/5 backdrop-blur-2xl shadow-[0_0_80px_rgba(157,78,221,0.18)] overflow-hidden">
+                  {/* Card header */}
+                  <div className="bg-gradient-to-r from-white/5 via-fuchsia-500/10 to-teal-500/10 p-6 border-b border-white/10">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-gradient-to-br from-cyan-400 to-emerald-500 rounded-2xl flex items-center justify-center">
+                        <div className="w-10 h-10 bg-gradient-to-br from-teal-400 to-blue-500 rounded-2xl flex items-center justify-center">
                           <ArrowUpDown className="w-5 h-5 text-white" />
                         </div>
                         <div>
                           <h2 className="text-2xl font-bold text-white">Token Swap</h2>
-                          <p className="text-cyan-300 text-sm">Powered by Turnkey Wallet</p>
+                          <p className="text-teal-200 text-sm">Secure smart-order routing</p>
                         </div>
                       </div>
                       <button className="p-2 hover:bg-white/10 rounded-xl transition-colors">
@@ -152,21 +176,23 @@ export default function SwapPage() {
                   </div>
 
                   <div className="p-8">
-                    {/* From Token */}
-                    <div className="mb-6">
+                    {/* FROM */}
+                    <div className={`mb-6 transition-transform duration-500 `}>
                       <label className="block text-white/80 text-sm font-medium mb-3">From</label>
-                      <div className="bg-white/5 backdrop-blur-xl border border-white/20 rounded-2xl p-4 hover:border-cyan-500/30 transition-all duration-300">
+                      <div className="bg-white/5 backdrop-blur-xl border border-white/20 rounded-2xl p-4 hover:border-teal-400/40 transition-all">
                         <div className="flex items-center justify-between mb-3">
                           <select
                             className="bg-transparent text-white text-lg font-semibold outline-none appearance-none cursor-pointer"
                             value={fromToken.symbol}
-                            onChange={e => setFromToken(tokens.find(t => t.symbol === e.target.value))}
+                            onChange={e => setFromToken(tokens.find(t => t.symbol === e.target.value) || tokens[0])}
                           >
-                            {tokens.map(t => <option key={t.symbol} value={t.symbol} className="bg-slate-800">{t.symbol}</option>)}
+                            {tokens.map(t => (
+                              <option key={t.symbol} value={t.symbol} className="bg-slate-800">
+                                {t.symbol}
+                              </option>
+                            ))}
                           </select>
-                          <div className="text-right">
-                            <p className="text-white/60 text-xs">Balance: 1,234.56</p>
-                          </div>
+                          <p className="text-white/60 text-xs">Balance: 1,234.56</p>
                         </div>
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-3">
@@ -187,31 +213,34 @@ export default function SwapPage() {
                       </div>
                     </div>
 
-                    {/* Swap Button */}
+                    {/* Swap Arrow */}
                     <div className="flex justify-center mb-6">
                       <button
                         onClick={swapTokens}
-                        className="w-12 h-12 bg-white/10 hover:bg-white/20 backdrop-blur-xl border border-white/20 hover:border-cyan-500/50 rounded-2xl flex items-center justify-center transition-all duration-300 hover:scale-110"
+                        className="group w-12 h-12 pl-3 rounded-2xl border border-white/20 bg-white/10 backdrop-blur-xl hover:scale-110 transition-all relative overflow-hidden"
                       >
-                        <ArrowUpDown className="w-5 h-5 text-cyan-400" />
+                        <span className="absolute inset-0 bg-gradient-to-r from-fuchsia-500/0 via-fuchsia-500/20 to-teal-400/0 translate-x-[-120%] group-hover:translate-x-[120%] transition-transform duration-700" />
+                        <ArrowUpDown className="w-5 h-5 text-teal-300 relative z-10" />
                       </button>
                     </div>
 
-                    {/* To Token */}
-                    <div className="mb-6">
+                    {/* TO */}
+                    <div className={`mb-6 transition-transform duration-500 `}>
                       <label className="block text-white/80 text-sm font-medium mb-3">To</label>
-                      <div className="bg-white/5 backdrop-blur-xl border border-white/20 rounded-2xl p-4 hover:border-emerald-500/30 transition-all duration-300">
+                      <div className="bg-white/5 backdrop-blur-xl border border-white/20 rounded-2xl p-4 hover:border-fuchsia-400/40 transition-all">
                         <div className="flex items-center justify-between mb-3">
                           <select
                             className="bg-transparent text-white text-lg font-semibold outline-none appearance-none cursor-pointer"
                             value={toToken.symbol}
-                            onChange={e => setToToken(tokens.find(t => t.symbol === e.target.value))}
+                            onChange={e => setToToken(tokens.find(t => t.symbol === e.target.value) || tokens[1])}
                           >
-                            {tokens.map(t => <option key={t.symbol} value={t.symbol} className="bg-slate-800">{t.symbol}</option>)}
+                            {tokens.map(t => (
+                              <option key={t.symbol} value={t.symbol} className="bg-slate-800">
+                                {t.symbol}
+                              </option>
+                            ))}
                           </select>
-                          <div className="text-right">
-                            <p className="text-white/60 text-xs">Balance: 567.89</p>
-                          </div>
+                          <p className="text-white/60 text-xs">Balance: 567.89</p>
                         </div>
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-3">
@@ -221,120 +250,168 @@ export default function SwapPage() {
                               <p className="text-gray-400 text-xs">${toToken.price.toLocaleString()}</p>
                             </div>
                           </div>
-                          <div className="text-right">
-                            <p className="text-white text-xl font-bold">
-                              {estimatedOutput}
-                            </p>
-                          </div>
+                          <p className="text-white text-xl font-bold">{estimatedOutput}</p>
                         </div>
                       </div>
                     </div>
 
-                    {/* Quote Information */}
+                    {/* Quote */}
                     {showQuote && (
-                      <div className="mb-6 bg-gradient-to-r from-cyan-500/10 to-emerald-500/10 backdrop-blur-xl border border-cyan-500/20 rounded-2xl p-4">
+                      <div className="mb-6 bg-white/5 backdrop-blur-xl border border-white/15 rounded-2xl p-4 shadow-inner">
                         <div className="flex items-center gap-2 mb-3">
-                          <Info className="w-4 h-4 text-cyan-400" />
-                          <span className="text-cyan-300 font-medium text-sm">Swap Details</span>
+                          <Info className="w-4 h-4 text-teal-300" />
+                          <span className="text-teal-200 font-medium text-sm">Swap Details</span>
                         </div>
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-2 gap-4 text-sm">
                           <div>
                             <p className="text-white/60 text-xs">Rate</p>
-                            <p className="text-white text-sm font-semibold">
-                              1 {fromToken.symbol} = {(fromToken.price / toToken.price).toFixed(4)} {toToken.symbol}
+                            <p className="text-white font-semibold">
+                              1 {fromToken.symbol} = {priceRatio.toFixed(4)} {toToken.symbol}
                             </p>
                           </div>
                           <div>
                             <p className="text-white/60 text-xs">Slippage</p>
-                            <p className="text-emerald-400 text-sm font-semibold">{slippage}%</p>
+                            <p className="text-emerald-300 font-semibold">{slippage}%</p>
                           </div>
                           <div>
                             <p className="text-white/60 text-xs">Network Fee</p>
-                            <p className="text-white text-sm font-semibold">
+                            <p className="text-white font-semibold">
                               {estimatedGas ? `~$${estimatedGas.toFixed(2)}` : 'Calculating...'}
                             </p>
                           </div>
                           <div>
                             <p className="text-white/60 text-xs">Route</p>
-                            <p className="text-cyan-400 text-sm font-semibold">Optimized</p>
+                            <p className="text-teal-300 font-semibold">Smart, MEV-aware</p>
                           </div>
                         </div>
                       </div>
                     )}
 
-                    {/* Swap Button */}
+                    {/* Execute */}
                     <button
                       onClick={handleSwap}
                       disabled={!amount || parseFloat(amount) <= 0 || isLoading}
-                      className="w-full bg-gradient-to-r from-cyan-500 to-emerald-600 hover:from-cyan-600 hover:to-emerald-700 disabled:from-gray-600 disabled:to-gray-700 text-white font-bold py-4 px-8 rounded-2xl shadow-lg hover:shadow-cyan-500/25 transition-all duration-300 hover:scale-[1.02] disabled:scale-100 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+                      className={`relative overflow-hidden w-full rounded-2xl font-semibold text-white py-4 px-8
+                      bg-gradient-to-r from-blue-600 to-cyan-500
+                      hover:from-blue-500 hover:to-cyan-400
+                      disabled:from-slate-700 disabled:to-slate-700
+                      transition-all duration-300 hover:scale-[1.02] disabled:cursor-not-allowed`}
                     >
-                      {isLoading ? (
-                        <>
-                          <RefreshCw className="w-5 h-5 animate-spin" />
-                          Processing Swap...
-                        </>
-                      ) : (
-                        <>
-                          <Zap className="w-5 h-5" />
-                          Execute Swap
-                        </>
-                      )}
+                      {/* Glow sweep */}
+                      <span className="pointer-events-none absolute inset-0 opacity-50">
+                        <span className="absolute -inset-x-20 -inset-y-12 bg-white/20 blur-2xl animate-[pulse_3s_ease-in-out_infinite]" />
+                      </span>
+
+                      <span className="relative z-10 flex items-center justify-center gap-3">
+                        {isLoading ? (
+                          <>
+                            {/* progress line */}
+                            <span className="relative w-5 h-5">
+                              <span className="absolute inset-0 rounded-full border-2 border-white/30" />
+                              <span className="absolute inset-0 rounded-full border-2 border-transparent border-t-white animate-spin" />
+                            </span>
+                            Processing Swap...
+                          </>
+                        ) : (
+                          <>
+                            <Zap className="w-5 h-5" />
+                            Execute Swap
+                          </>
+                        )}
+                      </span>
                     </button>
 
-                    {/* Benefits Section */}
-                    <div className="mt-8 pt-6 border-t border-white/10">
-                      <div className="text-center mb-4">
-                        <h3 className="text-white font-semibold mb-2 flex items-center justify-center gap-2">
-                          <Globe className="w-4 h-4 text-cyan-400" />
-                          Why Choose SwapZilla?
-                        </h3>
+                    {/* Animated loader bar (only while swapping) */}
+                    {isLoading && (
+                      <div className="mt-4 h-1 w-full overflow-hidden rounded-full bg-white/10">
+                        <div className="h-full w-1/3 rounded-full bg-gradient-to-r from-fuchsia-400 to-teal-300 animate-[slide_1.2s_linear_infinite]" />
                       </div>
-                      <div className="grid grid-cols-2 gap-4">
+                    )}
+
+                    {/* Pair Insights */}
+                    <div className="mt-8 pt-6 border-t border-white/10">
+                      <h3 className="text-white font-semibold mb-4 flex items-center gap-2">
+                        <Activity className="w-4 h-4 text-teal-300" />
+                        Pair Insights
+                      </h3>
+                      <div className="grid md:grid-cols-4 sm:grid-cols-2 gap-4 text-sm">
+                        <div className="bg-white/5 border border-white/10 rounded-2xl p-4 backdrop-blur-xl">
+                          <p className="text-white/60 text-xs mb-1">Liquidity Tier</p>
+                          <p className="text-white font-semibold">{liquidityTier}</p>
+                        </div>
+                        <div className="bg-white/5 border border-white/10 rounded-2xl p-4 backdrop-blur-xl">
+                          <p className="text-white/60 text-xs mb-1">Price Impact (est.)</p>
+                          <p className={`font-semibold ${priceImpact < 0.5 ? 'text-emerald-300' : 'text-amber-300'}`}>
+                            {priceImpact.toFixed(2)}%
+                          </p>
+                        </div>
+                        <div className="bg-white/5 border border-white/10 rounded-2xl p-4 backdrop-blur-xl">
+                          <p className="text-white/60 text-xs mb-1">Volatility (24h)</p>
+                          <p className={`${volatility < 6 ? 'text-emerald-300' : 'text-rose-300'} font-semibold`}>
+                            {volatility.toFixed(1)}%
+                          </p>
+                        </div>
+                        <div className="bg-white/5 border border-white/10 rounded-2xl p-4 backdrop-blur-xl">
+                          <p className="text-white/60 text-xs mb-1">Trade Size (USD)</p>
+                          <p className="text-white font-semibold">${tradeSizeUsd.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                        </div>
+                      </div>
+
+                      {/* Perks */}
+                      <div className="grid grid-cols-2 gap-4 mt-6">
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-xl flex items-center justify-center">
+                          <div className="w-8 h-8 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-xl flex items-center justify-center">
                             <TrendingUp className="w-4 h-4 text-white" />
                           </div>
                           <div>
                             <p className="text-white text-sm font-medium">Best Rates</p>
-                            <p className="text-gray-400 text-xs">AI-optimized routing</p>
+                            <p className="text-gray-400 text-xs">AI smart routing across DEXs</p>
                           </div>
                         </div>
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 bg-gradient-to-r from-emerald-500 to-green-600 rounded-xl flex items-center justify-center">
+                          <div className="w-8 h-8 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-xl flex items-center justify-center">
                             <Clock className="w-4 h-4 text-white" />
                           </div>
                           <div>
-                            <p className="text-white text-sm font-medium">Instant Swaps</p>
-                            <p className="text-gray-400 text-xs">Sub-second execution</p>
+                            <p className="text-white text-sm font-medium">Fast Finality</p>
+                            <p className="text-gray-400 text-xs">Sub-second confirmations*</p>
                           </div>
                         </div>
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 bg-gradient-to-r from-orange-500 to-red-600 rounded-xl flex items-center justify-center">
+                          <div className="w-8 h-8 bg-gradient-to-r from-amber-500 to-yellow-500 rounded-xl flex items-center justify-center">
                             <Lock className="w-4 h-4 text-white" />
                           </div>
                           <div>
                             <p className="text-white text-sm font-medium">Secure</p>
-                            <p className="text-gray-400 text-xs">Turnkey integration</p>
+                            <p className="text-gray-400 text-xs">MEV-aware + slippage guard</p>
                           </div>
                         </div>
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 bg-gradient-to-r from-violet-500 to-purple-600 rounded-xl flex items-center justify-center">
-                            <Sparkles className="w-4 h-4 text-white" />
+                          <div className="w-8 h-8 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center">
+                            <CheckCircle2 className="w-4 h-4 text-white" />
                           </div>
                           <div>
-                            <p className="text-white text-sm font-medium">AI Support</p>
-                            <p className="text-gray-400 text-xs">24/7 assistance</p>
+                            <p className="text-white text-sm font-medium">Non-custodial</p>
+                            <p className="text-gray-400 text-xs">You control your keys</p>
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              </div>{/* /Main */}
             </div>
           </div>
         </div>
       </div>
+
+      {/* Local keyframes for the loader sweep */}
+      <style jsx>{`
+        @keyframes slide {
+          0% { transform: translateX(-100%); }
+          100% { transform: translateX(300%); }
+        }
+      `}</style>
     </>
   );
 }

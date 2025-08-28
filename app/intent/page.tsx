@@ -1,27 +1,47 @@
-'use client';
+"use client";
+
 import { useState } from "react";
-import { Send, Zap, TrendingUp, Shield, Coins, ArrowUpRight, Activity, Globe, Lock } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  Send, Zap, TrendingUp, Shield, Coins, ArrowUpRight,
+  Activity, Globe, Lock, Brain, BarChart3, Cpu, Server,
+  Sparkles, Info, CheckCircle2, Clock, Settings,
+  MessageCircle, Bot, User, Target, Layers, Network
+} from "lucide-react";
 
 import Navbar from "../components/Navbar";
 
+const aiCapabilities = [
+  { icon: Brain, name: "Smart Analysis", desc: "Real-time market insights", color: "text-cyan-300" },
+  { icon: Target, name: "Intent Recognition", desc: "Understands complex goals", color: "text-fuchsia-300" },
+  { icon: Network, name: "Cross-Chain", desc: "Multi-blockchain routing", color: "text-emerald-300" },
+  { icon: Layers, name: "Strategy Builder", desc: "Custom DeFi strategies", color: "text-amber-300" }
+];
 
+const marketMetrics = [
+  { label: "Total Volume (24h)", value: "$847.2M", change: "+12.4%" },
+  { label: "Active Protocols", value: "156", change: "+8" },
+  { label: "Success Rate", value: "99.7%", change: "+0.2%" },
+  { label: "Avg Response Time", value: "0.8s", change: "-15%" }
+];
 
 export default function IntentPage() {
   const [messages, setMessages] = useState([
     { 
       sender: "ai", 
       text: "Welcome to SwapAI! I'm your intelligent DeFi assistant. I can help you with token swaps, liquidity analysis, yield farming opportunities, and market insights. What would you like to explore today?",
-      timestamp: new Date().toLocaleTimeString()
+      timestamp: new Date().toLocaleTimeString(),
+      suggestions: ["Find best AVAX to USDC route", "Analyze yield opportunities", "Check gas optimization"]
     }
   ]);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
 
   const quickActions = [
-    { icon: Coins, text: "Best Swap Routes", color: "from-cyan-500 to-blue-600" },
-    { icon: TrendingUp, text: "Market Analysis", color: "from-green-500 to-emerald-600" },
-    { icon: Shield, text: "Security Check", color: "from-orange-500 to-red-600" },
-    { icon: Activity, text: "Yield Opportunities", color: "from-violet-500 to-purple-600" }
+    { icon: Coins, text: "Best Swap Routes", color: "from-cyan-500 to-blue-600", desc: "Find optimal trading paths" },
+    { icon: TrendingUp, text: "Market Analysis", color: "from-green-500 to-emerald-600", desc: "Real-time price insights" },
+    { icon: Shield, text: "Security Check", color: "from-orange-500 to-red-600", desc: "Risk assessment tools" },
+    { icon: Activity, text: "Yield Opportunities", color: "from-cyan-500 to-blue-600", desc: "Maximize your returns" }
   ];
 
   const sendMessage = () => {
@@ -37,198 +57,351 @@ export default function IntentPage() {
     setInput("");
     setIsTyping(true);
     
-    // Simulate AI response with more realistic delay
+    // Simulated AI response with more detailed responses
     setTimeout(() => {
       const responses = [
-        "I'll help you find the most efficient swap route with minimal slippage. Let me analyze the current liquidity pools...",
-        "Based on current market conditions, I can suggest optimal entry points and risk management strategies.",
-        "I'm scanning multiple DEXs to find you the best rates. Current gas fees are moderate - good time to swap!",
-        "Let me check the latest yield farming opportunities across major protocols for maximum returns.",
+        {
+          text: "I'll help you find the most efficient swap route with minimal slippage. Let me analyze the current liquidity pools across 12 DEXs...",
+          suggestions: ["Show detailed route", "Compare gas costs", "Set price alerts"]
+        },
+        {
+          text: "Based on current market conditions, AVAX is showing strong momentum. Current liquidity depth is $45M across major pools. Best entry point appears to be now with 0.3% slippage.",
+          suggestions: ["Execute swap now", "Set limit order", "View full analysis"]
+        },
+        {
+          text: "I'm scanning 156 protocols for optimal yields. Found 3 high-APY opportunities: Trader Joe (18.4%), Benqi (15.2%), and Pangolin (12.8%). All have low impermanent loss risk.",
+          suggestions: ["View strategies", "Calculate returns", "Check risks"]
+        },
+        {
+          text: "Security analysis complete! Smart contracts verified, no recent exploits detected. Current gas optimization can save you 23% on transaction costs.",
+          suggestions: ["Apply optimizations", "Schedule transaction", "Security report"]
+        }
       ];
       
       const randomResponse = responses[Math.floor(Math.random() * responses.length)];
       
       setMessages(prev => [...prev, { 
         sender: "ai", 
-        text: randomResponse,
-        timestamp: new Date().toLocaleTimeString()
+        text: randomResponse.text,
+        timestamp: new Date().toLocaleTimeString(),
+        suggestions: randomResponse.suggestions
       }]);
       setIsTyping(false);
     }, 1500);
   };
 
-  const handleQuickAction = (actionText) => {
+  const handleQuickAction = (actionText: string) => {
     setInput(actionText);
+  };
+
+  const handleSuggestion = (suggestion: string) => {
+    setInput(suggestion);
   };
 
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 relative overflow-hidden">
-        {/* Animated Background Elements */}
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -top-40 -right-40 w-80 h-80 bg-cyan-500/10 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-cyan-500/5 to-blue-500/5 rounded-full blur-3xl animate-spin" style={{animationDuration: '20s'}}></div>
-        </div>
+      <div className="min-h-screen relative overflow-hidden pt-20"
+           style={{ background: "radial-gradient(1200px 800px at 10% -10%, #0EA5E922, transparent), radial-gradient(900px 700px at 90% 110%, #22C55E22, transparent), linear-gradient(180deg,#0B0F19 0%, #0A0E17 100%)" }}>
 
-        <div className="relative z-10 pt-24 px-4 pb-8">
-          <div className="max-w-6xl mx-auto">
-            {/* Hero Section */}
+        {/* Neon Orbs / Glass Glow - Same as swap page */}
+        {/* <div className="pointer-events-none absolute inset-0">
+          <div className="absolute -top-40 -right-40 w-[28rem] h-[28rem] rounded-full blur-3xl bg-cyan-500/20 animate-pulse" />
+          <div className="absolute -bottom-40 -left-40 w-[28rem] h-[28rem] rounded-full blur-3xl bg-fuchsia-500/10 animate-pulse [animation-delay:1s]" />
+        </div> */}
+
+        <div className="relative z-10 px-4 py-12">
+          <div className="max-w-7xl mx-auto">
+            {/* Header - Same style as swap page */}
             <div className="text-center mb-12">
-              <div className="inline-flex items-center gap-2 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 backdrop-blur-xl border border-cyan-500/30 rounded-full px-6 py-2 mb-6">
-                <Globe className="w-4 h-4 text-cyan-400" />
-                <span className="text-cyan-300 text-sm font-medium">AI-Powered DeFi Intelligence</span>
+              <div className="inline-flex items-center gap-2 bg-white/5 backdrop-blur-xl border border-white/10 rounded-full px-6 py-2 mb-6 shadow-[0_0_40px_rgba(0,255,209,0.15)]">
+                <Brain className="w-4 h-4 text-teal-300" />
+                <span className="text-teal-200 text-sm font-medium">AI-Powered DeFi Intelligence</span>
               </div>
-              <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-white via-cyan-100 to-blue-200 bg-clip-text text-transparent mb-4">
-                Intelligent Token Swapping
+              <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-white via-teal-100 to-fuchsia-200 bg-clip-text text-transparent mb-3">
+                Intelligent Trading Assistant
               </h1>
-              <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-                Experience the future of DeFi with AI-driven insights, optimal routing, and personalized trading strategies
+              <p className="text-lg text-white/70 max-w-3xl mx-auto">
+                Experience next-generation DeFi with AI-driven insights, natural language trading, and personalized strategies.
               </p>
             </div>
 
             <div className="grid lg:grid-cols-3 gap-8">
-              {/* Stats Cards */}
+              {/* Left rail: Market Metrics + AI Capabilities */}
               <div className="lg:col-span-1 space-y-6">
-                <div className="bg-white/5 backdrop-blur-2xl rounded-3xl p-6 border border-white/10 hover:border-cyan-500/30 transition-all duration-300">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-12 h-12 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-2xl flex items-center justify-center">
-                      <TrendingUp className="w-6 h-6 text-white" />
-                    </div>
-                    <div>
-                      <h3 className="text-white font-semibold">Total Volume</h3>
-                      <p className="text-gray-400 text-sm">24h Trading</p>
-                    </div>
-                  </div>
-                  <p className="text-2xl font-bold text-white">$2.4B</p>
-                  <p className="text-green-400 text-sm flex items-center gap-1 mt-1">
-                    <ArrowUpRight className="w-3 h-3" />
-                    +12.5%
-                  </p>
-                </div>
-
-                <div className="bg-white/5 backdrop-blur-2xl rounded-3xl p-6 border border-white/10 hover:border-green-500/30 transition-all duration-300">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center">
-                      <Shield className="w-6 h-6 text-white" />
-                    </div>
-                    <div>
-                      <h3 className="text-white font-semibold">Security Score</h3>
-                      <p className="text-gray-400 text-sm">Protocol Safety</p>
-                    </div>
-                  </div>
-                  <p className="text-2xl font-bold text-white">99.8%</p>
-                  <p className="text-green-400 text-sm flex items-center gap-1 mt-1">
-                    <Lock className="w-3 h-3" />
-                    Audited
-                  </p>
-                </div>
-
-                <div className="bg-white/5 backdrop-blur-2xl rounded-3xl p-6 border border-white/10 hover:border-violet-500/30 transition-all duration-300">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-12 h-12 bg-gradient-to-br from-violet-500 to-purple-600 rounded-2xl flex items-center justify-center">
-                      <Zap className="w-6 h-6 text-white" />
-                    </div>
-                    <div>
-                      <h3 className="text-white font-semibold">Avg. Slippage</h3>
-                      <p className="text-gray-400 text-sm">Optimized Routes</p>
-                    </div>
-                  </div>
-                  <p className="text-2xl font-bold text-white">0.08%</p>
-                  <p className="text-cyan-400 text-sm">Ultra Low</p>
-                </div>
-              </div>
-
-              {/* Chat Interface */}
-              <div className="lg:col-span-2">
-                <div className="bg-white/5 backdrop-blur-2xl rounded-3xl border border-white/10 shadow-2xl overflow-hidden">
-                  {/* Chat Header */}
-                  <div className="bg-gradient-to-r from-cyan-500/10 to-blue-500/10 p-6 border-b border-white/10">
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-2xl flex items-center justify-center">
-                        <Zap className="w-6 h-6 text-white" />
-                      </div>
-                      <div>
-                        <h2 className="text-2xl font-bold text-white">SwapAI Assistant</h2>
-                        <p className="text-cyan-300">Your intelligent DeFi trading companion</p>
-                      </div>
-                      <div className="ml-auto flex items-center gap-2">
-                        <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
-                        <span className="text-green-400 text-sm font-medium">Online</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Quick Actions */}
-                  <div className="p-6 border-b border-white/10">
-                    <p className="text-white/80 text-sm mb-4">Quick Actions:</p>
-                    <div className="grid grid-cols-2 gap-3">
-                      {quickActions.map((action, idx) => {
-                        const IconComponent = action.icon;
-                        return (
-                          <button
-                            key={idx}
-                            onClick={() => handleQuickAction(action.text)}
-                            className={`bg-gradient-to-r ${action.color} bg-opacity-10 hover:bg-opacity-20 border border-white/20 hover:border-white/30 rounded-2xl p-4 text-left transition-all duration-300 hover:scale-105`}
-                          >
-                            <div className="flex items-center gap-3">
-                              <div className={`w-10 h-10 bg-gradient-to-r ${action.color} rounded-xl flex items-center justify-center`}>
-                                <IconComponent className="w-5 h-5 text-white" />
-                              </div>
-                              <span className="text-white font-medium text-sm">{action.text}</span>
-                            </div>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  {/* Messages */}
-                  <div className="h-96 overflow-y-auto p-6 space-y-4">
-                    {messages.map((msg, idx) => (
-                      <div key={idx} className={`flex ${msg.sender === "user" ? "justify-end" : "justify-start"}`}>
-                        <div className={`max-w-xs lg:max-w-md ${
-                          msg.sender === "user" 
-                            ? "bg-gradient-to-r from-cyan-500 to-blue-600 text-white" 
-                            : "bg-white/10 backdrop-blur-xl border border-white/20 text-white"
-                        } rounded-2xl px-4 py-3 shadow-lg`}>
-                          <p className="text-sm leading-relaxed">{msg.text}</p>
-                          <p className="text-xs opacity-70 mt-2">{msg.timestamp}</p>
+                {/* Market Metrics */}
+                <div className="bg-white/5 backdrop-blur-2xl rounded-3xl p-6 border border-white/10 shadow-2xl">
+                  <h3 className="text-white font-semibold mb-4 flex items-center gap-2">
+                    <BarChart3 className="w-5 h-5 text-teal-300" />
+                    Live Metrics
+                  </h3>
+                  <div className="space-y-4">
+                    {marketMetrics.map((metric, idx) => (
+                      <div key={idx} className="flex items-center justify-between">
+                        <div>
+                          <p className="text-white font-medium text-sm">{metric.label}</p>
+                          <p className="text-gray-400 text-xs">{metric.value}</p>
+                        </div>
+                        <div className="text-right">
+                          <p className={`text-xs font-semibold ${metric.change.startsWith('+') ? 'text-emerald-400' : 'text-amber-400'}`}>
+                            {metric.change}
+                          </p>
                         </div>
                       </div>
                     ))}
-                    
-                    {isTyping && (
-                      <div className="flex justify-start">
-                        <div className="bg-white/10 backdrop-blur-xl border border-white/20 text-white rounded-2xl px-4 py-3">
-                          <div className="flex gap-1">
-                            <div className="w-2 h-2 bg-cyan-400 rounded-full animate-bounce"></div>
-                            <div className="w-2 h-2 bg-cyan-400 rounded-full animate-bounce delay-100"></div>
-                            <div className="w-2 h-2 bg-cyan-400 rounded-full animate-bounce delay-200"></div>
+                  </div>
+                </div>
+
+                {/* AI Capabilities */}
+                <div className="bg-white/5 backdrop-blur-2xl rounded-3xl p-6 border border-white/10 shadow-2xl">
+                  <h3 className="text-white font-semibold mb-4 flex items-center gap-2">
+                    <Sparkles className="w-5 h-5 text-fuchsia-300" />
+                    AI Capabilities
+                  </h3>
+                  <div className="space-y-4">
+                    {aiCapabilities.map((capability, idx) => {
+                      const IconComponent = capability.icon;
+                      return (
+                        <div key={idx} className="flex items-start gap-3">
+                          <div className={`w-8 h-8 bg-gradient-to-br from-white/10 to-white/5 rounded-xl flex items-center justify-center border border-white/20`}>
+                            <IconComponent className={`w-4 h-4 ${capability.color}`} />
+                          </div>
+                          <div>
+                            <p className="text-white font-medium text-sm">{capability.name}</p>
+                            <p className="text-gray-400 text-xs">{capability.desc}</p>
                           </div>
                         </div>
+                      );
+                    })}
+                  </div>
+                  <div className="mt-4 flex items-center gap-2">
+                    <span className="relative flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-300"></span>
+                    </span>
+                    <span className="text-emerald-300 text-xs">AI online • Processing 847 requests/min</span>
+                  </div>
+                </div>
+
+                {/* System Status */}
+                <div className="bg-white/5 backdrop-blur-2xl rounded-3xl p-6 border border-white/10 shadow-2xl">
+                  <h3 className="text-white font-semibold mb-4 flex items-center gap-2">
+                    <Activity className="w-5 h-5 text-emerald-300" />
+                    System Status
+                  </h3>
+                  <div className="grid grid-cols-2 gap-3 text-sm">
+                    <div className="flex items-center gap-2 text-white/80">
+                      <Cpu className="w-4 h-4 text-teal-300" /> AI Models: Online
+                    </div>
+                    <div className="flex items-center gap-2 text-white/80">
+                      <Server className="w-4 h-4 text-fuchsia-300" /> Latency: 0.8s
+                    </div>
+                    <div className="flex items-center gap-2 text-white/80">
+                      <Globe className="w-4 h-4 text-cyan-300" /> 156 Protocols
+                    </div>
+                    <div className="flex items-center gap-2 text-white/80">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-300" /> 99.7% Uptime
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Main Chat Interface */}
+              <div className="lg:col-span-2">
+                <div className="rounded-3xl border border-white/10 bg-white/5 backdrop-blur-2xl shadow-[0_0_80px_rgba(157,78,221,0.18)] overflow-hidden">
+                  {/* Chat Header - Same style as swap page */}
+                  <div className="bg-gradient-to-r from-white/5 via-fuchsia-500/10 to-teal-500/10 p-6 border-b border-white/10">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-gradient-to-br from-teal-400 to-blue-500 rounded-2xl flex items-center justify-center">
+                          <MessageCircle className="w-5 h-5 text-white" />
+                        </div>
+                        <div>
+                          <h2 className="text-2xl font-bold text-white">AI Trading Assistant</h2>
+                          <p className="text-teal-200 text-sm">Natural language DeFi interactions</p>
+                        </div>
                       </div>
-                    )}
+                      <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1">
+                          <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
+                          <span className="text-emerald-300 text-xs">Live</span>
+                        </div>
+                        <button className="p-2 hover:bg-white/10 rounded-xl transition-colors">
+                          <Settings className="w-5 h-5 text-gray-400" />
+                        </button>
+                      </div>
+                    </div>
                   </div>
 
-                  {/* Input */}
-                  <div className="p-6 border-t border-white/10 bg-white/5">
+                  <div className="p-8">
+                    {/* Quick Actions */}
+                    <div className="mb-6">
+                      <label className="block text-white/80 text-sm font-medium mb-3">Quick Actions</label>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        {quickActions.map((action, idx) => {
+                          const IconComponent = action.icon;
+                          return (
+                            <button
+                              key={idx}
+                              onClick={() => handleQuickAction(action.text)}
+                              className="group bg-white/5 backdrop-blur-xl border border-white/20 hover:border-teal-400/40 rounded-2xl p-4 text-left transition-all hover:scale-[1.02]"
+                            >
+                              <div className="flex items-center gap-3">
+                                <div className={`w-10 h-10 bg-gradient-to-r ${action.color} rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform`}>
+                                  <IconComponent className="w-5 h-5 text-white" />
+                                </div>
+                                <div>
+                                  <p className="text-white font-medium text-sm">{action.text}</p>
+                                  <p className="text-gray-400 text-xs">{action.desc}</p>
+                                </div>
+                              </div>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* Chat Messages */}
+                    <div className="mb-6">
+                      <label className="block text-white/80 text-sm font-medium mb-3">Conversation</label>
+                      <div className="bg-white/5 backdrop-blur-xl border border-white/20 rounded-2xl">
+                        <div className="h-80 overflow-y-auto p-4 space-y-4">
+                          <AnimatePresence>
+                            {messages.map((msg, idx) => (
+                              <motion.div
+                                key={idx}
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -20 }}
+                                transition={{ duration: 0.4 }}
+                                className={`flex ${msg.sender === "user" ? "justify-end" : "justify-start"}`}
+                              >
+                                <div className={`max-w-[80%] ${
+                                  msg.sender === "user" 
+                                    ? "bg-gradient-to-r from-blue-600 to-teal-500 text-white" 
+                                    : "bg-white/10 backdrop-blur-xl border border-white/20 text-white"
+                                } rounded-2xl px-4 py-3 shadow-lg`}>
+                                  <div className="flex items-start gap-2 mb-2">
+                                    {msg.sender === "ai" ? (
+                                      <Bot className="w-4 h-4 text-teal-300 mt-0.5" />
+                                    ) : (
+                                      <User className="w-4 h-4 text-white mt-0.5" />
+                                    )}
+                                    <span className="text-xs opacity-70 font-medium">
+                                      {msg.sender === "ai" ? "AI Assistant" : "You"}
+                                    </span>
+                                  </div>
+                                  <p className="text-sm leading-relaxed mb-2">{msg.text}</p>
+                                  {msg.suggestions && (
+                                    <div className="flex flex-wrap gap-2 mt-3">
+                                      {msg.suggestions.map((suggestion, sidx) => (
+                                        <button
+                                          key={sidx}
+                                          onClick={() => handleSuggestion(suggestion)}
+                                          className="text-xs bg-white/20 hover:bg-white/30 px-3 py-1 rounded-full transition-colors"
+                                        >
+                                          {suggestion}
+                                        </button>
+                                      ))}
+                                    </div>
+                                  )}
+                                  <p className="text-xs opacity-60 mt-2">{msg.timestamp}</p>
+                                </div>
+                              </motion.div>
+                            ))}
+                          </AnimatePresence>
+
+                          {isTyping && (
+                            <motion.div 
+                              className="flex justify-start"
+                              initial={{ opacity: 0, y: 20 }}
+                              animate={{ opacity: 1, y: 0 }}
+                            >
+                              <div className="bg-white/10 backdrop-blur-xl border border-white/20 text-white rounded-2xl px-4 py-3">
+                                <div className="flex items-center gap-2">
+                                  <Bot className="w-4 h-4 text-teal-300" />
+                                  <div className="flex gap-1">
+                                    <div className="w-2 h-2 bg-teal-400 rounded-full animate-bounce"></div>
+                                    <div className="w-2 h-2 bg-teal-400 rounded-full animate-bounce delay-100"></div>
+                                    <div className="w-2 h-2 bg-teal-400 rounded-full animate-bounce delay-200"></div>
+                                  </div>
+                                </div>
+                              </div>
+                            </motion.div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Input */}
                     <div className="flex gap-3">
                       <input
-                        className="flex-1 bg-white/10 backdrop-blur-xl border border-white/20 focus:border-cyan-500/50 focus:outline-none text-white rounded-2xl px-4 py-3 placeholder-gray-400 transition-all duration-300"
-                        placeholder="Ask me about token swaps, yield farming, market analysis..."
+                        className="flex-1 bg-white/10 backdrop-blur-xl border border-white/20 focus:border-teal-500/50 focus:outline-none text-white rounded-2xl px-4 py-3 placeholder-gray-400 transition-all duration-300"
+                        placeholder="Ask me about swaps, yields, market analysis, or any DeFi strategy..."
                         value={input}
                         onChange={e => setInput(e.target.value)}
                         onKeyDown={e => e.key === "Enter" && sendMessage()}
                       />
                       <button
-                        className="bg-gradient-to-r from-cyan-500 to-blue-600 text-white p-3 rounded-2xl shadow-lg hover:shadow-cyan-500/25 transition-all duration-300 hover:scale-105"
                         onClick={sendMessage}
-                        disabled={!input.trim()}
+                        disabled={!input.trim() || isTyping}
+                        className={`relative overflow-hidden rounded-2xl font-semibold text-white px-6 py-3
+                        bg-gradient-to-r from-blue-600 to-teal-500
+                        hover:from-blue-500 hover:to-teal-400
+                        disabled:from-slate-700 disabled:to-slate-700
+                        transition-all duration-300 hover:scale-[1.02] disabled:cursor-not-allowed`}
                       >
-                        <Send className="w-5 h-5" />
+                        <span className="relative z-10 flex items-center justify-center gap-2">
+                          <Send className="w-4 h-4" />
+                          Send
+                        </span>
                       </button>
+                    </div>
+
+                    {/* AI Features */}
+                    <div className="mt-8 pt-6 border-t border-white/10">
+                      <h3 className="text-white font-semibold mb-4 flex items-center gap-2">
+                        <Zap className="w-4 h-4 text-teal-300" />
+                        AI Features
+                      </h3>
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-xl flex items-center justify-center">
+                            <Brain className="w-4 h-4 text-white" />
+                          </div>
+                          <div>
+                            <p className="text-white text-sm font-medium">Smart Analysis</p>
+                            <p className="text-gray-400 text-xs">Real-time insights</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-xl flex items-center justify-center">
+                            <Target className="w-4 h-4 text-white" />
+                          </div>
+                          <div>
+                            <p className="text-white text-sm font-medium">Intent Recognition</p>
+                            <p className="text-gray-400 text-xs">Understands goals</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center">
+                            <Network className="w-4 h-4 text-white" />
+                          </div>
+                          <div>
+                            <p className="text-white text-sm font-medium">Cross-Chain</p>
+                            <p className="text-gray-400 text-xs">Multi-blockchain</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 bg-gradient-to-r from-amber-500 to-orange-500 rounded-xl flex items-center justify-center">
+                            <Layers className="w-4 h-4 text-white" />
+                          </div>
+                          <div>
+                            <p className="text-white text-sm font-medium">Strategy Builder</p>
+                            <p className="text-gray-400 text-xs">Custom strategies</p>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
