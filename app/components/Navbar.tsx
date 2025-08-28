@@ -77,13 +77,17 @@ export default function Navbar() {
           <div className="w-10 h-10 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-xl flex items-center justify-center">
             <Zap className="w-6 h-6 text-white" />
           </div>
-          <span className="text-xl font-bold text-white">SwapZilla</span>
-        </div>
-
+          <Link
+            href="/"
+            className="text-lg text-white/80 hover:text-white px-4 py-2 rounded transition"
+          >
+            SwapZilla
+          </Link>
+</div>
         {/* Links + Wallet */}
         <div className="hidden md:flex items-center gap-6">
           <Link
-            href="/"
+            href="/SwapPage"
             className="text-lg text-white/80 hover:text-white px-4 py-2 rounded transition"
           >
             Swap

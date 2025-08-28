@@ -3,96 +3,175 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Send, Zap, TrendingUp, Shield, Coins, ArrowUpRight,
-  Activity, Globe, Lock, Brain, BarChart3, Cpu, Server,
-  Sparkles, Info, CheckCircle2, Clock, Settings,
-  MessageCircle, Bot, User, Target, Layers, Network
+  Send,
+  Zap,
+  TrendingUp,
+  Shield,
+  Coins,
+  Activity,
+  Globe,
+  Brain,
+  BarChart3,
+  Cpu,
+  Server,
+  Sparkles,
+  CheckCircle2,
+  Settings,
+  MessageCircle,
+  Bot,
+  User,
+  Target,
+  Layers,
+  Network,
 } from "lucide-react";
 
 import Navbar from "../components/Navbar";
 
 const aiCapabilities = [
-  { icon: Brain, name: "Smart Analysis", desc: "Real-time market insights", color: "text-cyan-300" },
-  { icon: Target, name: "Intent Recognition", desc: "Understands complex goals", color: "text-fuchsia-300" },
-  { icon: Network, name: "Cross-Chain", desc: "Multi-blockchain routing", color: "text-emerald-300" },
-  { icon: Layers, name: "Strategy Builder", desc: "Custom DeFi strategies", color: "text-amber-300" }
+  {
+    icon: Brain,
+    name: "Smart Analysis",
+    desc: "Real-time market insights",
+    color: "text-cyan-300",
+  },
+  {
+    icon: Target,
+    name: "Intent Recognition",
+    desc: "Understands complex goals",
+    color: "text-fuchsia-300",
+  },
+  {
+    icon: Network,
+    name: "Cross-Chain",
+    desc: "Multi-blockchain routing",
+    color: "text-emerald-300",
+  },
+  {
+    icon: Layers,
+    name: "Strategy Builder",
+    desc: "Custom DeFi strategies",
+    color: "text-amber-300",
+  },
 ];
 
 const marketMetrics = [
   { label: "Total Volume (24h)", value: "$847.2M", change: "+12.4%" },
   { label: "Active Protocols", value: "156", change: "+8" },
   { label: "Success Rate", value: "99.7%", change: "+0.2%" },
-  { label: "Avg Response Time", value: "0.8s", change: "-15%" }
+  { label: "Avg Response Time", value: "0.8s", change: "-15%" },
 ];
 
 export default function IntentPage() {
   const [messages, setMessages] = useState([
-    { 
-      sender: "ai", 
+    {
+      sender: "ai",
       text: "Welcome to SwapAI! I'm your intelligent DeFi assistant. I can help you with token swaps, liquidity analysis, yield farming opportunities, and market insights. What would you like to explore today?",
       timestamp: new Date().toLocaleTimeString(),
-      suggestions: ["Find best STX to USDC route", "Analyze yield opportunities", "Check gas optimization"]
-    }
+      suggestions: [
+        "Find best STX to USDC route",
+        "Analyze yield opportunities",
+        "Check gas optimization",
+      ],
+    },
   ]);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
-  const [time, setTime] = useState<string | null>(null);
-
-  useEffect(() => {
-    setTime(new Date().toLocaleTimeString());
-  }, []);
 
   const quickActions = [
-    { icon: Coins, text: "Best Swap Routes", color: "from-cyan-500 to-blue-600", desc: "Find optimal trading paths" },
-    { icon: TrendingUp, text: "Market Analysis", color: "from-green-500 to-emerald-600", desc: "Real-time price insights" },
-    { icon: Shield, text: "Security Check", color: "from-orange-500 to-red-600", desc: "Risk assessment tools" },
-    { icon: Activity, text: "Yield Opportunities", color: "from-cyan-500 to-blue-600", desc: "Maximize your returns" }
+    {
+      icon: Coins,
+      text: "Best Swap Routes",
+      color: "from-cyan-500 to-blue-600",
+      desc: "Find optimal trading paths",
+    },
+    {
+      icon: TrendingUp,
+      text: "Market Analysis",
+      color: "from-green-500 to-emerald-600",
+      desc: "Real-time price insights",
+    },
+    {
+      icon: Shield,
+      text: "Security Check",
+      color: "from-orange-500 to-red-600",
+      desc: "Risk assessment tools",
+    },
+    {
+      icon: Activity,
+      text: "Yield Opportunities",
+      color: "from-cyan-500 to-blue-600",
+      desc: "Maximize your returns",
+    },
   ];
 
-  const sendMessage = () => {
+  // Replace with your actual Groq API key or move to backend
+  const GROQ_API_KEY = "key";
+
+  const sendMessage = async () => {
     if (!input.trim()) return;
-    
-    const userMessage = { 
-      sender: "user", 
-      text: input, 
-      timestamp: new Date().toLocaleTimeString() 
+
+    const userMessage = {
+      sender: "user",
+      text: input,
+      timestamp: new Date().toLocaleTimeString(),
+      suggestions: [],
     };
-    
-    setMessages(prev => [...prev, userMessage]);
+    setMessages((prev) => [...prev, userMessage]);
     setInput("");
     setIsTyping(true);
-    
-    // Simulated AI response with more detailed responses
-    setTimeout(() => {
-      const responses = [
-        {
-          text: "I'll help you find the most efficient swap route with minimal slippage. Let me analyze the current liquidity pools across 12 DEXs...",
-          suggestions: ["Show detailed route", "Compare gas costs", "Set price alerts"]
+
+    try {
+      const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${GROQ_API_KEY}`,
         },
-        {
-          text: "Based on current market conditions, AVAX is showing strong momentum. Current liquidity depth is $45M across major pools. Best entry point appears to be now with 0.3% slippage.",
-          suggestions: ["Execute swap now", "Set limit order", "View full analysis"]
-        },
-        {
-          text: "I'm scanning 156 protocols for optimal yields. Found 3 high-APY opportunities: Trader Joe (18.4%), Benqi (15.2%), and Pangolin (12.8%). All have low impermanent loss risk.",
-          suggestions: ["View strategies", "Calculate returns", "Check risks"]
-        },
-        {
-          text: "Security analysis complete! Smart contracts verified, no recent exploits detected. Current gas optimization can save you 23% on transaction costs.",
-          suggestions: ["Apply optimizations", "Schedule transaction", "Security report"]
-        }
-      ];
+        body: JSON.stringify({
+          model: "llama3-70b-8192",
+          messages: [
+            ...messages.map((m) => ({
+              role: m.sender === "user" ? "user" : "assistant",
+              content: m.text,
+            })),
+            { role: "user", content: input },
+          ],
+          max_tokens: 1000, // Optional: Adjust based on desired response length
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      const aiText =
+        data.choices?.[0]?.message?.content ||
+        "Sorry, I could not get a response.";
       
-      const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-      
-      setMessages(prev => [...prev, { 
-        sender: "ai", 
-        text: randomResponse.text,
-        timestamp: new Date().toLocaleTimeString(),
-        suggestions: randomResponse.suggestions
-      }]);
+      setMessages((prev) => [
+        ...prev,
+        {
+          sender: "ai",
+          text: aiText,
+          timestamp: new Date().toLocaleTimeString(),
+          suggestions: [], // Add suggestions if needed
+        },
+      ]);
+    } catch (error: any) {
+      console.error("Error connecting to Groq API:", error);
+      setMessages((prev) => [
+        ...prev,
+        {
+          sender: "ai",
+          text: `Error: ${error.message || "Failed to connect to AI. Please try again."}`,
+          timestamp: new Date().toLocaleTimeString(),
+          suggestions: [],
+        },
+      ]);
+    } finally {
       setIsTyping(false);
-    }, 1500);
+    }
   };
 
   const handleQuickAction = (actionText: string) => {
@@ -106,28 +185,29 @@ export default function IntentPage() {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen relative overflow-hidden pt-20"
-           style={{ background: "radial-gradient(1200px 800px at 10% -10%, #0EA5E922, transparent), radial-gradient(900px 700px at 90% 110%, #22C55E22, transparent), linear-gradient(180deg,#0B0F19 0%, #0A0E17 100%)" }}>
-
-        {/* Neon Orbs / Glass Glow - Same as swap page */}
-        {/* <div className="pointer-events-none absolute inset-0">
-          <div className="absolute -top-40 -right-40 w-[28rem] h-[28rem] rounded-full blur-3xl bg-cyan-500/20 animate-pulse" />
-          <div className="absolute -bottom-40 -left-40 w-[28rem] h-[28rem] rounded-full blur-3xl bg-fuchsia-500/10 animate-pulse [animation-delay:1s]" />
-        </div> */}
-
+      <div
+        className="min-h-screen relative overflow-hidden pt-20"
+        style={{
+          background:
+            "radial-gradient(1200px 800px at 10% -10%, #0EA5E922, transparent), radial-gradient(900px 700px at 90% 110%, #22C55E22, transparent), linear-gradient(180deg,#0B0F19 0%, #0A0E17 100%)",
+        }}
+      >
         <div className="relative z-10 px-4 py-12">
           <div className="max-w-7xl mx-auto">
-            {/* Header - Same style as swap page */}
+            {/* Header */}
             <div className="text-center mb-12">
               <div className="inline-flex items-center gap-2 bg-white/5 backdrop-blur-xl border border-white/10 rounded-full px-6 py-2 mb-6 shadow-[0_0_40px_rgba(0,255,209,0.15)]">
                 <Brain className="w-4 h-4 text-teal-300" />
-                <span className="text-teal-200 text-sm font-medium">AI-Powered DeFi Intelligence</span>
+                <span className="text-teal-200 text-sm font-medium">
+                  AI-Powered DeFi Intelligence
+                </span>
               </div>
               <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-white via-teal-100 to-fuchsia-200 bg-clip-text text-transparent mb-3">
                 Intelligent Trading Assistant
               </h1>
               <p className="text-lg text-white/70 max-w-3xl mx-auto">
-                Experience next-generation DeFi with AI-driven insights, natural language trading, and personalized strategies.
+                Experience next-generation DeFi with AI-driven insights, natural
+                language trading, and personalized strategies.
               </p>
             </div>
 
@@ -142,13 +222,26 @@ export default function IntentPage() {
                   </h3>
                   <div className="space-y-4">
                     {marketMetrics.map((metric, idx) => (
-                      <div key={idx} className="flex items-center justify-between">
+                      <div
+                        key={idx}
+                        className="flex items-center justify-between"
+                      >
                         <div>
-                          <p className="text-white font-medium text-sm">{metric.label}</p>
-                          <p className="text-gray-400 text-xs">{metric.value}</p>
+                          <p className="text-white font-medium text-sm">
+                            {metric.label}
+                          </p>
+                          <p className="text-gray-400 text-xs">
+                            {metric.value}
+                          </p>
                         </div>
                         <div className="text-right">
-                          <p className={`text-xs font-semibold ${metric.change.startsWith('+') ? 'text-emerald-400' : 'text-amber-400'}`}>
+                          <p
+                            className={`text-xs font-semibold ${
+                              metric.change.startsWith("+")
+                                ? "text-emerald-400"
+                                : "text-amber-400"
+                            }`}
+                          >
                             {metric.change}
                           </p>
                         </div>
@@ -168,12 +261,20 @@ export default function IntentPage() {
                       const IconComponent = capability.icon;
                       return (
                         <div key={idx} className="flex items-start gap-3">
-                          <div className={`w-8 h-8 bg-gradient-to-br from-white/10 to-white/5 rounded-xl flex items-center justify-center border border-white/20`}>
-                            <IconComponent className={`w-4 h-4 ${capability.color}`} />
+                          <div
+                            className={`w-8 h-8 bg-gradient-to-br from-white/10 to-white/5 rounded-xl flex items-center justify-center border border-white/20`}
+                          >
+                            <IconComponent
+                              className={`w-4 h-4 ${capability.color}`}
+                            />
                           </div>
                           <div>
-                            <p className="text-white font-medium text-sm">{capability.name}</p>
-                            <p className="text-gray-400 text-xs">{capability.desc}</p>
+                            <p className="text-white font-medium text-sm">
+                              {capability.name}
+                            </p>
+                            <p className="text-gray-400 text-xs">
+                              {capability.desc}
+                            </p>
                           </div>
                         </div>
                       );
@@ -184,7 +285,9 @@ export default function IntentPage() {
                       <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                       <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-300"></span>
                     </span>
-                    <span className="text-emerald-300 text-xs">AI online • Processing 847 requests/min</span>
+                    <span className="text-emerald-300 text-xs">
+                      AI online • Processing 847 requests/min
+                    </span>
                   </div>
                 </div>
 
@@ -196,16 +299,19 @@ export default function IntentPage() {
                   </h3>
                   <div className="grid grid-cols-2 gap-3 text-sm">
                     <div className="flex items-center gap-2 text-white/80">
-                      <Cpu className="w-4 h-4 text-teal-300" /> AI Models: Online
+                      <Cpu className="w-4 h-4 text-teal-300" /> AI Models:
+                      Online
                     </div>
                     <div className="flex items-center gap-2 text-white/80">
-                      <Server className="w-4 h-4 text-fuchsia-300" /> Latency: 0.8s
+                      <Server className="w-4 h-4 text-fuchsia-300" /> Latency:
+                      0.8s
                     </div>
                     <div className="flex items-center gap-2 text-white/80">
                       <Globe className="w-4 h-4 text-cyan-300" /> 156 Protocols
                     </div>
                     <div className="flex items-center gap-2 text-white/80">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-300" /> 99.7% Uptime
+                      <CheckCircle2 className="w-4 h-4 text-emerald-300" />{" "}
+                      99.7% Uptime
                     </div>
                   </div>
                 </div>
@@ -214,7 +320,6 @@ export default function IntentPage() {
               {/* Main Chat Interface */}
               <div className="lg:col-span-2">
                 <div className="rounded-3xl border border-white/10 bg-white/5 backdrop-blur-2xl shadow-[0_0_80px_rgba(157,78,221,0.18)] overflow-hidden">
-                  {/* Chat Header - Same style as swap page */}
                   <div className="bg-gradient-to-r from-white/5 via-fuchsia-500/10 to-teal-500/10 p-6 border-b border-white/10">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
@@ -222,8 +327,12 @@ export default function IntentPage() {
                           <MessageCircle className="w-5 h-5 text-white" />
                         </div>
                         <div>
-                          <h2 className="text-2xl font-bold text-white">AI Trading Assistant</h2>
-                          <p className="text-teal-200 text-sm">Natural language DeFi interactions</p>
+                          <h2 className="text-2xl font-bold text-white">
+                            AI Trading Assistant
+                          </h2>
+                          <p className="text-teal-200 text-sm">
+                            Natural language DeFi interactions
+                          </p>
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
@@ -241,7 +350,9 @@ export default function IntentPage() {
                   <div className="p-8">
                     {/* Quick Actions */}
                     <div className="mb-6">
-                      <label className="block text-white/80 text-sm font-medium mb-3">Quick Actions</label>
+                      <label className="block text-white/80 text-sm font-medium mb-3">
+                        Quick Actions
+                      </label>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                         {quickActions.map((action, idx) => {
                           const IconComponent = action.icon;
@@ -252,12 +363,18 @@ export default function IntentPage() {
                               className="group bg-white/5 backdrop-blur-xl border border-white/20 hover:border-teal-400/40 rounded-2xl p-4 text-left transition-all hover:scale-[1.02]"
                             >
                               <div className="flex items-center gap-3">
-                                <div className={`w-10 h-10 bg-gradient-to-r ${action.color} rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform`}>
+                                <div
+                                  className={`w-10 h-10 bg-gradient-to-r ${action.color} rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform`}
+                                >
                                   <IconComponent className="w-5 h-5 text-white" />
                                 </div>
                                 <div>
-                                  <p className="text-white font-medium text-sm">{action.text}</p>
-                                  <p className="text-gray-400 text-xs">{action.desc}</p>
+                                  <p className="text-white font-medium text-sm">
+                                    {action.text}
+                                  </p>
+                                  <p className="text-gray-400 text-xs">
+                                    {action.desc}
+                                  </p>
                                 </div>
                               </div>
                             </button>
@@ -268,7 +385,9 @@ export default function IntentPage() {
 
                     {/* Chat Messages */}
                     <div className="mb-6">
-                      <label className="block text-white/80 text-sm font-medium mb-3">Conversation</label>
+                      <label className="block text-white/80 text-sm font-medium mb-3">
+                        Conversation
+                      </label>
                       <div className="bg-white/5 backdrop-blur-xl border border-white/20 rounded-2xl">
                         <div className="h-80 overflow-y-auto p-4 space-y-4">
                           <AnimatePresence>
@@ -279,47 +398,50 @@ export default function IntentPage() {
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, y: -20 }}
                                 transition={{ duration: 0.4 }}
-                                className={`flex ${msg.sender === "user" ? "justify-end" : "justify-start"}`}
+                                className={`flex ${
+                                  msg.sender === "user"
+                                    ? "justify-end"
+                                    : "justify-start"
+                                }`}
                               >
-                                <div className={`max-w-[80%] ${
-                                  msg.sender === "user" 
-                                    ? "bg-gradient-to-r from-blue-600 to-teal-500 text-white" 
-                                    : "bg-white/10 backdrop-blur-xl border border-white/20 text-white"
-                                } rounded-2xl px-4 py-3 shadow-lg`}>
-                                  <div className="flex items-start gap-2 mb-2">
-                                    {msg.sender === "ai" ? (
-                                      <Bot className="w-4 h-4 text-teal-300 mt-0.5" />
-                                    ) : (
-                                      <User className="w-4 h-4 text-white mt-0.5" />
-                                    )}
-                                    <span className="text-xs opacity-70 font-medium">
-                                      {msg.sender === "ai" ? "AI Assistant" : "You"}
-                                    </span>
-                                  </div>
-                                  <p className="text-sm leading-relaxed mb-2">{msg.text}</p>
+                                <div
+                                  className={`max-w-[50%] ${
+                                    msg.sender === "user"
+                                      ? "bg-gradient-to-r from-blue-600 to-teal-500 text-white"
+                                      : "bg-white/10 backdrop-blur-xl border border-white/20 text-white"
+                                  } rounded-2xl px-4 py-3 shadow-lg`}
+                                >
+                                 
+                                  <p className="text-md leading-relaxed mb-2 ">
+                                    {msg.text}
+                                  </p>
                                   {msg.suggestions && (
-                                    <div className="flex flex-wrap gap-2 mt-3">
-                                      {msg.suggestions.map((suggestion, sidx) => (
-                                        <button
-                                          key={sidx}
-                                          onClick={() => handleSuggestion(suggestion)}
-                                          className="text-xs bg-white/20 hover:bg-white/30 px-3 py-1 rounded-full transition-colors"
-                                        >
-                                          {suggestion}
-                                        </button>
-                                      ))}
+                                    <div className="flex flex-wrap gap-2 mt-1">
+                                      {msg.suggestions.map(
+                                        (suggestion, sidx) => (
+                                          <button
+                                            key={sidx}
+                                            onClick={() =>
+                                              handleSuggestion(suggestion)
+                                            }
+                                            className="text-xs bg-white/20 hover:bg-white/30 px-3 py-1 rounded-full transition-colors"
+                                          >
+                                            {suggestion}
+                                          </button>
+                                        )
+                                      )}
                                     </div>
                                   )}
-                                <p className="text-xs opacity-60 mt-2">
-                                {time}
-                                </p>
+                                  <p className="text-xs opacity-60 ">
+                                    {msg.timestamp}
+                                  </p>
                                 </div>
                               </motion.div>
                             ))}
                           </AnimatePresence>
 
                           {isTyping && (
-                            <motion.div 
+                            <motion.div
                               className="flex justify-start"
                               initial={{ opacity: 0, y: 20 }}
                               animate={{ opacity: 1, y: 0 }}
@@ -346,8 +468,8 @@ export default function IntentPage() {
                         className="flex-1 bg-white/10 backdrop-blur-xl border border-white/20 focus:border-teal-500/50 focus:outline-none text-white rounded-2xl px-4 py-3 placeholder-gray-400 transition-all duration-300"
                         placeholder="Ask me about swaps, yields, market analysis, or any DeFi strategy..."
                         value={input}
-                        onChange={e => setInput(e.target.value)}
-                        onKeyDown={e => e.key === "Enter" && sendMessage()}
+                        onChange={(e) => setInput(e.target.value)}
+                        onKeyDown={(e) => e.key === "Enter" && sendMessage()}
                       />
                       <button
                         onClick={sendMessage}
@@ -377,8 +499,12 @@ export default function IntentPage() {
                             <Brain className="w-4 h-4 text-white" />
                           </div>
                           <div>
-                            <p className="text-white text-sm font-medium">Smart Analysis</p>
-                            <p className="text-gray-400 text-xs">Real-time insights</p>
+                            <p className="text-white text-sm font-medium">
+                              Smart Analysis
+                            </p>
+                            <p className="text-gray-400 text-xs">
+                              Real-time insights
+                            </p>
                           </div>
                         </div>
                         <div className="flex items-center gap-3">
@@ -386,8 +512,12 @@ export default function IntentPage() {
                             <Target className="w-4 h-4 text-white" />
                           </div>
                           <div>
-                            <p className="text-white text-sm font-medium">Intent Recognition</p>
-                            <p className="text-gray-400 text-xs">Understands goals</p>
+                            <p className="text-white text-sm font-medium">
+                              Intent Recognition
+                            </p>
+                            <p className="text-gray-400 text-xs">
+                              Understands goals
+                            </p>
                           </div>
                         </div>
                         <div className="flex items-center gap-3">
@@ -395,8 +525,12 @@ export default function IntentPage() {
                             <Network className="w-4 h-4 text-white" />
                           </div>
                           <div>
-                            <p className="text-white text-sm font-medium">Cross-Chain</p>
-                            <p className="text-gray-400 text-xs">Multi-blockchain</p>
+                            <p className="text-white text-sm font-medium">
+                              Cross-Chain
+                            </p>
+                            <p className="text-gray-400 text-xs">
+                              Multi-blockchain
+                            </p>
                           </div>
                         </div>
                         <div className="flex items-center gap-3">
@@ -404,8 +538,12 @@ export default function IntentPage() {
                             <Layers className="w-4 h-4 text-white" />
                           </div>
                           <div>
-                            <p className="text-white text-sm font-medium">Strategy Builder</p>
-                            <p className="text-gray-400 text-xs">Custom strategies</p>
+                            <p className="text-white text-sm font-medium">
+                              Strategy Builder
+                            </p>
+                            <p className="text-gray-400 text-xs">
+                              Custom strategies
+                            </p>
                           </div>
                         </div>
                       </div>
